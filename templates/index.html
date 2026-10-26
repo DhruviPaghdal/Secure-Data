@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Secure Data - Presentation Layer</title>
+
+    <!-- Same fonts as reference -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT PANEL -->
+
+    <div class="left">
+
+        <div class="panel-title">
+            Secure Data
+        </div>
+
+        <div class="subtitle">
+            Presentation Layer
+        </div>
+
+
+        <div class="section">
+
+            <label>Message</label>
+
+            <textarea
+                name="message"
+                id="messageInput"
+                placeholder="Enter your message..."
+                required>{{ original_message }}</textarea>
+
+
+            <button class="run" onclick="processData()">
+                Process Data
+            </button>
+
+            <button class="reset" onclick="resetData()">
+                Reset
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT PANEL -->
+
+    <div class="right">
+
+        <div id="simulation">
+
+            <!-- Processing Status -->
+
+            <div class="step">
+
+                <div class="step-title">
+                    Processing Status
+                </div>
+
+                <div class="desc">
+                    Has the data been securely processed?
+                </div>
+
+                {% if original_message %}
+
+                <div class="success">
+                    ✓ Processing Completed Successfully
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if original_message %}
+
+            <!-- STEP 1 -->
+
+            <div class="step">
+
+                <div class="step-title">
+                    Step 1: Base64 Encoding
+                </div>
+
+                <div class="desc">
+                    Original message converted into Base64 format.
+                </div>
+
+                <div class="result">
+                    {{ encoded_message }}
+                </div>
+
+            </div>
+
+
+            <!-- STEP 2 -->
+
+            <div class="step">
+
+                <div class="step-title">
+                    Step 2: AES Encryption
+                </div>
+
+                <div class="desc">
+                    Base64 data encrypted using AES symmetric encryption.
+                </div>
+
+                <div class="result">
+                    {{ encrypted_message }}
+                </div>
+
+            </div>
+
+
+            <!-- STEP 3 -->
+
+            <div class="step">
+
+                <div class="step-title">
+                    Step 3: SHA-256 
+                </div>
+
+                <div class="desc">
+                    SHA-256 hash generated.
+                </div>
+
+                <div class="result">
+                    {{ hash_value }}
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <!-- INITIAL STEP -->
+
+            <div class="step">
+
+                <div class="step-title">
+                    Step 1: Input Data
+                </div>
+
+                <div class="desc">
+                    Enter a message from the left panel to start processing.
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function processData()
+{
+    let message = document.getElementById("messageInput").value.trim();
+
+    if(message === "")
+    {
+        alert("Please enter a message.");
+        return;
+    }
+
+    // Send message to Flask
+    let form = document.createElement("form");
+
+    form.method = "POST";
+    form.action = "/";
+
+    let input = document.createElement("input");
+
+    input.type = "hidden";
+    input.name = "message";
+    input.value = message;
+
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+
+    form.submit();
+}
+
+
+function resetData()
+{
+    window.location.href = "/";
+}
+
+</script>
+
+</body>
+
+</html>
